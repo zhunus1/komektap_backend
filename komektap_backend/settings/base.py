@@ -21,6 +21,7 @@ environ.Env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+FLASHCALL_TOKEN = env('FLASHCALL_TOKEN')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -71,25 +72,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'komektap_backend.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
 #Cache
 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://localhost:6379/',
+        'LOCATION': env('REDIS'),
         'KEY_PREFIX': 'imdb',
-        'TIMEOUT': 60 * 15,
+        'TIMEOUT': 60 * 1,
     }
 }
 

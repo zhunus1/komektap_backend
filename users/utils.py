@@ -3,6 +3,8 @@ import requests
 from rest_framework import status
 from rest_framework.response import Response
 from django.core.cache import cache
+from django.conf import settings
+
 
 def generate_code(phone_number):
      # Check if a code already exists for the given phone number
@@ -42,7 +44,7 @@ def make_call(phone_number, verification_code):
 
     flashcall_url = 'https://authenticalls.com/api/flashcall/'
 
-    token = '8ad1141e0b9cef6dc54ae730faf289199a67e7f55c32d9b001a75713154662ea'
+    token = settings.FLASHCALL_TOKEN
     headers = {
         'Authorization': f'Bearer {token}',
     }
