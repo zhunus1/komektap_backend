@@ -3,6 +3,8 @@ from .models import AppUser
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
+
 from .utils import (
     generate_code,
     validate_code,
@@ -19,7 +21,8 @@ from .serializers import (
 
 # Create your views here.
 
-class RegistrationView(APIView):
+class RegistrationView(GenericAPIView):
+    serializer_class = RegistrationSerializer
     def post(self, request, *args, **kwargs):
         serializer = RegistrationSerializer(
             data = request.data,
@@ -64,7 +67,9 @@ class RegistrationView(APIView):
     
 
 
-class VerificationView(APIView):
+class VerificationView(GenericAPIView):
+    serializer_class = VerificationCodeSerializer
+
     def post(self, request, *args, **kwargs):
         serializer = VerificationCodeSerializer(
             data = request.data,

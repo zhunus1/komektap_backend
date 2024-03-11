@@ -17,7 +17,6 @@ def generate_code(phone_number):
     
     # Set the key-value pair in the Django cache with a timeout of 1 minute
     cache.set(f'imdb:{phone_number}', code, 60)
-    print(code)
     return code
 
 
