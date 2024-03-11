@@ -14,6 +14,7 @@ class PasswordSerializer(serializers.Serializer):
 
 
 class VerificationCodeSerializer(serializers.Serializer):
+    phone_number = PhoneNumberField()
     verification_code = serializers.CharField(
         max_length = 4,
     )

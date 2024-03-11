@@ -1,10 +1,13 @@
-import requests
 from django.shortcuts import render
 from .models import AppUser
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .utils import generate_code
+from .utils import (
+    generate_code,
+    validate_code,
+    make_call
+)
 from .serializers import (
     PhoneSerializer,
     PasswordSerializer,
@@ -16,7 +19,7 @@ from .serializers import (
 
 # Create your views here.
 
-class RegistrationAPIView(APIView):
+class RegistrationView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = RegistrationSerializer(
             data = request.data,
@@ -32,32 +35,66 @@ class RegistrationAPIView(APIView):
                     status = status.HTTP_400_BAD_REQUEST
                 )
             
-            verification_code = generate_code()
-
-            # Make a call to the service
-            flashcall_data = {
-                'msisdn': phone_number,
-                'verification_code': verification_code,
-            }
-
-            flashcall_url = 'https://authenticalls.com/api/flashcall/'
-            flashcall_response = requests.post(
-                flashcall_url, 
-                flashcall_data
-            )
-
-            if flashcall_response.status_code == 200:
-                user = serializer.save()
+            try:
+                # Attempt to generate code and save user
+                verification_code = generate_code(phone_number)
+            except Exception as e:
                 return Response(
-                    {'detail': 'Пользователь успешно зарегистрирован.'},
+                    {'detail': 'Ошибка генерации кода. Попробуйте позже.'},
+                    status = status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Make a call to the users phone
+            result = make_call(phone_number, verification_code)
+            if result:
+                serializer.save()
+                return Response(
+                    data = serializer.data,
                     status = status.HTTP_201_CREATED
                 )
             return Response(
-                {'detail': 'Ошибка валидации номера телефона. Попробуйте снова.'},
+                {'detail': 'Ошибка верификации номера телефона. Попробуйте позже.'},
+                status = status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(
+            serializer.errors, 
+            status = status.HTTP_400_BAD_REQUEST
+        )
+    
+
+
+class VerificationView(APIView):
+    def post(self, request, *args, **kwargs):
+        serializer = VerificationCodeSerializer(
+            data = request.data,
+        )
+
+        if serializer.is_valid():
+            verification_code = serializer.validated_data['verification_code']
+            phone_number = serializer.validated_data['phone_number']
+            
+            result = validate_code(phone_number, verification_code)
+            if result:
+                # Get the user from the database using the phone_number
+                user = AppUser.objects.get(
+                    phone_number = phone_number,
+                )
+                
+                # Update the user's is_active status to True
+                user.is_active = True
+                user.save()
+
+                return Response(
+                    {'detail': 'Верификация прошла успешно.'},
+                    status = status.HTTP_200_OK
+                )
+            return Response(
+                {'detail': 'Неверный код верификации.'},
                 status = status.HTTP_400_BAD_REQUEST
             )
         return Response(
             serializer.errors, 
             status = status.HTTP_400_BAD_REQUEST
         )
-
+    

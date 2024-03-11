@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_yasg',
     'phonenumber_field',
     'users',
 ]
@@ -80,6 +81,17 @@ DATABASES = {
     }
 }
 
+
+#Cache
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://localhost:6379/',
+        'KEY_PREFIX': 'imdb',
+        'TIMEOUT': 60 * 15,
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
