@@ -26,6 +26,7 @@ class VerificationCodeSerializer(serializers.Serializer):
 
 
 class AuthorizationSerializer(serializers.ModelSerializer):
+    phone_number = PhoneNumberField()
     class Meta:
         model = AppUser
         fields = (

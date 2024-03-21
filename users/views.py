@@ -2,8 +2,11 @@ from django.shortcuts import render
 from .models import AppUser
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
+from django.contrib.auth import authenticate, login
+from rest_framework.authtoken.models import Token
+from rest_framework import generics, permissions
+
 
 from .utils import (
     generate_code,
@@ -20,11 +23,60 @@ from .serializers import (
 
 
 # Create your views here.
+class AuthorizationView(GenericAPIView):
+    serializer_class = AuthorizationSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(
+            data = request.data,
+        )
+
+        if serializer.is_valid():
+            phone_number = serializer.validated_data['phone_number']
+            password = serializer.validated_data['password']
+            
+            # Authenticate the user
+            user = authenticate(
+                phone_number = phone_number, 
+                password = password
+            )
+
+            #Authorize only active users          
+            if user is not None:
+                if user.is_active:
+                    token, created = Token.objects.get_or_create(
+                        user = user,
+                    )
+                                    
+                    return Response(
+                        {
+                            'detail': 'User authenticated successfully.', 
+                            'token': token.key
+                        }, 
+                        status = status.HTTP_200_OK
+                    )
+                return Response(
+                    {'detail': 'Phone number is not verified.'}, 
+                    status = status.HTTP_400_BAD_REQUEST
+                )
+            return Response(
+                {'detail': 'Invalid phone number or password.'}, 
+                status = status.HTTP_401_UNAUTHORIZED
+            )
+        
+
+        return Response(
+            serializer.errors, 
+            status = status.HTTP_400_BAD_REQUEST
+        )
+
 
 class RegistrationView(GenericAPIView):
     serializer_class = RegistrationSerializer
+    permission_classes = [permissions.AllowAny]
+    
     def post(self, request, *args, **kwargs):
-        serializer = RegistrationSerializer(
+        serializer = self.serializer_class(
             data = request.data,
         )
 
@@ -69,9 +121,10 @@ class RegistrationView(GenericAPIView):
 
 class VerificationView(GenericAPIView):
     serializer_class = VerificationCodeSerializer
-
+    permission_classes = [permissions.AllowAny]
+    
     def post(self, request, *args, **kwargs):
-        serializer = VerificationCodeSerializer(
+        serializer = self.serializer_class(
             data = request.data,
         )
 
