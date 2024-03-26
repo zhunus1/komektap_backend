@@ -26,6 +26,7 @@ from .serializers import (
 # Create your views here.
 class AuthorizationView(GenericAPIView):
     serializer_class = AuthorizationSerializer
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(
@@ -205,7 +206,7 @@ class RequestCallView(GenericAPIView):
     
 
 class PasswordResetView(GenericAPIView):
-    serializer_class = AuthorizationSerializer  # Assuming you have a serializer for password reset
+    serializer_class = AuthorizationSerializer
     permission_classes = [permissions.AllowAny]
     
     def post(self, request, *args, **kwargs):
@@ -230,8 +231,6 @@ class PasswordResetView(GenericAPIView):
 
             # Update user's password
             user.password = make_password(password)
-            print(user.password)
-            print(password)
             user.save()
 
             return Response(

@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_yasg',
     'phonenumber_field',
+    'djmoney',
     'users',
+    'adverts',
 ]
 
 MIDDLEWARE = [
