@@ -38,7 +38,7 @@ class Location(models.Model):
 class Category(models.Model):
     icon = models.FileField(
         upload_to = 'category/icons/', 
-        validators = (validate_icon),
+        validators = [validate_icon],
         verbose_name = "Иконка",
     )
     
@@ -59,9 +59,10 @@ class Category(models.Model):
 
 
 class Advert(models.Model):
-    #TO-DO: Create user profile
     profile = models.ForeignKey(
+        'profiles.Profile',
         on_delete = models.CASCADE,
+        related_name = 'adverts',
         verbose_name = "Профиль",
     )
 
@@ -73,6 +74,7 @@ class Advert(models.Model):
     category = models.ForeignKey(
         Category, 
         on_delete = models.CASCADE,
+        related_name = 'adverts',
         verbose_name = "Категория",
     )
 
@@ -97,6 +99,7 @@ class Advert(models.Model):
     location = models.OneToOneField(
         Location, 
         on_delete = models.CASCADE,
+        related_name = 'advert',
         verbose_name = "Местоположение",
     )
 
