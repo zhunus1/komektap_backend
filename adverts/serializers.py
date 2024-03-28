@@ -46,6 +46,7 @@ class AdvertDetailSerializer(serializers.ModelSerializer):
 
 class AdvertListSerializer(serializers.ModelSerializer):
     phone_number = None
+    category = None
     class Meta:
         model = Advert
         fields = (
@@ -53,7 +54,8 @@ class AdvertListSerializer(serializers.ModelSerializer):
             'title',
             'phone_number',
             'price',
-            'images'
+            'images',
+            'category'
         )
 
 
