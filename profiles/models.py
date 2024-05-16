@@ -11,14 +11,7 @@ class Profile(models.Model):
         verbose_name = "Пользователь",
         related_name = 'profile',
     )
-
-    favorites = models.ManyToManyField(
-        'adverts.Advert',
-        verbose_name = "Избранное",
-        related_name = 'profiles',
-        blank = True,
-    )
-
+    
     profile_image = models.ImageField(
         upload_to = images_path,
         verbose_name = "Изображение",

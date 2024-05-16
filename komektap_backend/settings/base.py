@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'djmoney',
     'users',
     'profiles',
-    'adverts',
 ]
 
 MIDDLEWARE = [
