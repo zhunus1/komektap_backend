@@ -7,8 +7,8 @@ from .views import (
 
 
 router = DefaultRouter()
-router.register(r'categories', CategoryViewSet)
-router.register(r'adverts', AdvertViewSet)
+router.register(r'categories', CategoryViewSet, 'categories')
+router.register(r'adverts', AdvertViewSet, 'adverts')
 
 
 urlpatterns = [
