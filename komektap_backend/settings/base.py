@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'djmoney',
     'users',
     'profiles',
+    'adverts',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +146,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Set the correct paths for GDAL and GEOS
+GDAL_LIBRARY_PATH = env('GDAL_LIBRARY_PATH')
+GEOS_LIBRARY_PATH = env('GEOS_LIBRARY_PATH')
+
+# Apply to system environment
+os.environ["GDAL_LIBRARY_PATH"] = GDAL_LIBRARY_PATH
+os.environ["GEOS_LIBRARY_PATH"] = GEOS_LIBRARY_PATH

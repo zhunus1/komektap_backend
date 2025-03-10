@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-+z%3=6fp4zcsh*31!*dq+zf@_!wyax-_00n6qh996(z$sm-&l4
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'komek_database',
+        'USER': 'komektap_admin_db',
+        'PASSWORD': 'Qwerty123@',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }

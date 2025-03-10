@@ -2,7 +2,7 @@ from .models import AppUser
 from rest_framework import serializers
 from phonenumber_field.serializerfields import PhoneNumberField
 from django.contrib.auth.hashers import make_password
-
+from profiles.models import Profile
 
 class PhoneSerializer(serializers.Serializer):
     phone_number = PhoneNumberField()
@@ -50,3 +50,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
         return super(RegistrationSerializer, self).create(validated_data)
+    
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        
+        user = AppUser.objects.create(**validated_data)
+        
+        profile = Profile.objects.get_or_create(
+            user = user,
+        ) 
+        
+        return user
