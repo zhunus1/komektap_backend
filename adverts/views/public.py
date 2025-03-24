@@ -15,6 +15,7 @@ from ..serializers.public import (
     AdvertDetailSerializer,
     AdvertListSerializer,
 )
+from ..filters import AdvertFilter
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -28,10 +29,11 @@ class AdvertViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Advert.objects.all()
     permission_classes = [IsAuthenticated]
     pagination_class = StandardSetPagination
-    filter_backends = [SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = (
         'title',
     )
+    filterset_class = AdvertFilter
 
     def get_queryset(self):
         return Advert.objects.filter(
